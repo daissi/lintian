@@ -1,0 +1,11 @@
+Tag: missing-dependency-on-r-api
+Severity: error
+Check: binaries
+Info: This package includes an "R" programming language package.
+ Such packages must depend on r-api-<i>N</i>.
+ .
+ If the package is using debhelper, this problem is usually due to a
+ missing <tt>--buildsystem=R</tt> call in <tt>debian/rules</tt> or a missing
+ ${R:Depends} substitution variable in the Depends line in
+ <tt>debian/control</tt>.
+Ref: https://wiki.debian.org/Teams/r-pkg-team

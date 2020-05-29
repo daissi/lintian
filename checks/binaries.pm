@@ -151,6 +151,7 @@ sub installable {
     my $needs_depends_line = 0;
     my $has_perl_lib = 0;
     my $has_php_ext = 0;
+    my $has_r_lib = 0;
     my $uses_numpy_c_abi = 0;
 
     my $arch = $processable->field('architecture', '');
@@ -529,6 +530,11 @@ sub installable {
             $has_perl_lib = 1;
         }
 
+        # R library?
+        if ($fname =~ m,^usr/lib/R/site-library/.*/DESCRIPTION$,) {
+            $has_r_lib = 1;
+        }
+
         # PHP extension?
         if ($fname =~ m,^usr/lib/php\d/.*\.so(?:\.\d+)*$,) {
             $has_php_ext = 1;
@@ -722,6 +728,15 @@ sub installable {
         unless ($depends->matches(qr/^phpapi-[\d\w+]+$/, VISIT_OR_CLAUSE_FULL))
         {
             $self->tag('missing-dependency-on-phpapi');
+        }
+    }
+
+    # Check for an R-api dependency.
+    if ($has_r_lib) {
+        # It is a virtual package, so no version is allowed and
+        # alternatives probably does not make sense here either.
+        unless ($depends->matches(qr/^r-api-[\d\w+]+$/, VISIT_OR_CLAUSE_FULL)) {
+            $self->tag('missing-dependency-on-r-api');
         }
     }
 
